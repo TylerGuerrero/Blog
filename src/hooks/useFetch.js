@@ -2,6 +2,8 @@ import { useState, useEffect } from 'react';
 
 // a custom hook has to start with use or else it wont work
 const useFetch = (url) => {
+    const abortController = new AbortController();
+
     const [data, setData] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -10,7 +12,7 @@ const useFetch = (url) => {
     // usually used to fetch data
     // can add dependecny to th  useEffect
     useEffect(() => {
-        fetch(url)
+        fetch(url, {signal: abortController.signal})
         .then(res => { 
             if (!res.ok) {
                 throw new Error('Could not fetch data for that resource')
@@ -24,9 +26,20 @@ const useFetch = (url) => {
             setError(null);
         })
         .catch(err => {
-            setIsLoading(false);
-            setError(err.message);
+            if (err.name === 'AbortError') {
+                console.log('fetch aborted')
+            } else {
+                setIsLoading(false);
+                setError(err.message);
+            }
         })
+
+        // fires only when component gets unmounted
+        // just simply have to return a function
+        // when running abort it goes to the catch err
+        // when running it will still and try to update the state
+        // if you dont catch it 
+        return () => abortController.abort();
     }, [url]);
 
     return { data, isLoading, error};
