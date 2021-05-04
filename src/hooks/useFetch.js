@@ -10,7 +10,7 @@ const useFetch = (url) => {
 
     // runs at every render  
     // usually used to fetch data
-    // can add dependecny to th  useEffect
+    // can add dependecny to the useEffect
     useEffect(() => {
         fetch(url, {signal: abortController.signal})
         .then(res => { 
@@ -27,7 +27,7 @@ const useFetch = (url) => {
         })
         .catch(err => {
             if (err.name === 'AbortError') {
-                console.log('fetch aborted')
+                console.log('fetch aborted');
             } else {
                 setIsLoading(false);
                 setError(err.message);
