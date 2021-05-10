@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';    
 
 // a custom hook has to start with use or else it wont work
-const useFetch = (url) => {
+const useFetch = async (url) => {
     const abortController = new AbortController();
 
     const [data, setData] = useState(null);
@@ -12,7 +12,7 @@ const useFetch = (url) => {
     // usually used to fetch data
     // can add dependecny to the useEffect
     useEffect(() => {
-        fetch(url, {signal: abortController.signal})
+        await fetch(url, {signal: abortController.signal})
         .then(res => { 
             if (!res.ok) {
                 throw new Error('Could not fetch data for that resource')
